@@ -1,14 +1,14 @@
 require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"Focm2+":[function(require,module,exports){
 exports.MemoryDb = require('./lib/MemoryDb');
-exports.LocalStorageDb = require('./lib/LocalStorageDb');
-exports.IndexedDb = require('./lib/IndexedDb');
-exports.WebSQLDb = require('./lib/WebSQLDb');
-exports.RemoteDb = require('./lib/RemoteDb');
-exports.HybridDb = require('./lib/HybridDb');
-exports.ReplicatingDb = require('./lib/ReplicatingDb');
+// exports.LocalStorageDb = require('./lib/LocalStorageDb');
+// exports.IndexedDb = require('./lib/IndexedDb');
+// exports.WebSQLDb = require('./lib/WebSQLDb');
+// exports.RemoteDb = require('./lib/RemoteDb');
+// exports.HybridDb = require('./lib/HybridDb');
+// exports.ReplicatingDb = require('./lib/ReplicatingDb');
 exports.utils = require('./lib/utils');
 
-},{"./lib/HybridDb":6,"./lib/IndexedDb":7,"./lib/LocalStorageDb":8,"./lib/MemoryDb":9,"./lib/RemoteDb":10,"./lib/ReplicatingDb":11,"./lib/WebSQLDb":12,"./lib/utils":15}],"minimongo":[function(require,module,exports){
+},{"./lib/MemoryDb":9,"./lib/utils":12}],"minimongo":[function(require,module,exports){
 module.exports=require('Focm2+');
 },{}],"jquery":[function(require,module,exports){
 module.exports=require('/nayFu');
@@ -705,7 +705,7 @@ HybridCollection = (function() {
 
 })();
 
-},{"./utils":15,"lodash":"nJZoxB"}],7:[function(require,module,exports){
+},{"./utils":12,"lodash":"nJZoxB"}],7:[function(require,module,exports){
 var Collection, IDBStore, IndexedDb, async, compileSort, processFind, utils, _;
 
 _ = require('lodash');
@@ -1209,7 +1209,7 @@ Collection = (function() {
 
 })();
 
-},{"./selector":14,"./utils":15,"async":18,"idb-wrapper":21,"lodash":"nJZoxB"}],8:[function(require,module,exports){
+},{"./selector":11,"./utils":12,"async":15,"idb-wrapper":18,"lodash":"nJZoxB"}],8:[function(require,module,exports){
 var Collection, LocalStorageDb, async, compileSort, processFind, utils, _;
 
 _ = require('lodash');
@@ -1541,7 +1541,7 @@ Collection = (function() {
 
 })();
 
-},{"./selector":14,"./utils":15,"async":18,"lodash":"nJZoxB"}],9:[function(require,module,exports){
+},{"./selector":11,"./utils":12,"async":15,"lodash":"nJZoxB"}],9:[function(require,module,exports){
 var Collection, MemoryDb, async, compileSort, processFind, utils, _;
 
 _ = require('lodash');
@@ -1789,334 +1789,7 @@ Collection = (function() {
 
 })();
 
-},{"./selector":14,"./utils":15,"async":18,"lodash":"nJZoxB"}],10:[function(require,module,exports){
-var $, Collection, RemoteDb, async, jQueryHttpClient, utils, _;
-
-_ = require('lodash');
-
-$ = require('jquery');
-
-async = require('async');
-
-utils = require('./utils');
-
-jQueryHttpClient = require('./jQueryHttpClient');
-
-module.exports = RemoteDb = (function() {
-  function RemoteDb(url, client, httpClient) {
-    this.url = url;
-    this.client = client;
-    this.collections = {};
-    this.httpClient = httpClient || jQueryHttpClient;
-  }
-
-  RemoteDb.prototype.addCollection = function(name, options, success, error) {
-    var collection, url, _ref;
-    if (options == null) {
-      options = {};
-    }
-    if (_.isFunction(options)) {
-      _ref = [{}, options, success], options = _ref[0], success = _ref[1], error = _ref[2];
-    }
-    url = options.url || (this.url + name);
-    collection = new Collection(name, url, this.client, this.httpClient);
-    this[name] = collection;
-    this.collections[name] = collection;
-    if (success != null) {
-      return success();
-    }
-  };
-
-  RemoteDb.prototype.removeCollection = function(name, success, error) {
-    delete this[name];
-    delete this.collections[name];
-    if (success != null) {
-      return success();
-    }
-  };
-
-  return RemoteDb;
-
-})();
-
-Collection = (function() {
-  function Collection(name, url, client, httpClient) {
-    this.name = name;
-    this.url = url;
-    this.client = client;
-    this.httpClient = httpClient;
-  }
-
-  Collection.prototype.find = function(selector, options) {
-    if (options == null) {
-      options = {};
-    }
-    return {
-      fetch: (function(_this) {
-        return function(success, error) {
-          var params;
-          params = {};
-          if (options.sort) {
-            params.sort = JSON.stringify(options.sort);
-          }
-          if (options.limit) {
-            params.limit = options.limit;
-          }
-          if (options.skip) {
-            params.skip = options.skip;
-          }
-          if (options.fields) {
-            params.fields = JSON.stringify(options.fields);
-          }
-          if (_this.client) {
-            params.client = _this.client;
-          }
-          params.selector = JSON.stringify(selector || {});
-          if ((typeof navigator !== "undefined" && navigator !== null) && navigator.userAgent.toLowerCase().indexOf('android 2.3') !== -1) {
-            params._ = new Date().getTime();
-          }
-          return _this.httpClient("GET", _this.url, params, null, success, error);
-        };
-      })(this)
-    };
-  };
-
-  Collection.prototype.findOne = function(selector, options, success, error) {
-    var params, _ref;
-    if (options == null) {
-      options = {};
-    }
-    if (_.isFunction(options)) {
-      _ref = [{}, options, success], options = _ref[0], success = _ref[1], error = _ref[2];
-    }
-    params = {};
-    if (options.sort) {
-      params.sort = JSON.stringify(options.sort);
-    }
-    params.limit = 1;
-    if (this.client) {
-      params.client = this.client;
-    }
-    params.selector = JSON.stringify(selector || {});
-    if ((typeof navigator !== "undefined" && navigator !== null) && navigator.userAgent.toLowerCase().indexOf('android 2.3') !== -1) {
-      params._ = new Date().getTime();
-    }
-    return this.httpClient("GET", this.url, params, null, function(results) {
-      if (results && results.length > 0) {
-        return success(results[0]);
-      } else {
-        return success(null);
-      }
-    }, error);
-  };
-
-  Collection.prototype.upsert = function(docs, bases, success, error) {
-    var items, results, _ref;
-    _ref = utils.regularizeUpsert(docs, bases, success, error), items = _ref[0], success = _ref[1], error = _ref[2];
-    if (!this.client) {
-      throw new Error("Client required to upsert");
-    }
-    results = [];
-    return async.eachLimit(items, 8, (function(_this) {
-      return function(item, cb) {
-        var params;
-        if (!item.doc._id) {
-          item.doc._id = utils.createUid();
-        }
-        params = {
-          client: _this.client
-        };
-        if ((typeof navigator !== "undefined" && navigator !== null) && navigator.userAgent.toLowerCase().indexOf('android 2.3') !== -1) {
-          params._ = new Date().getTime();
-        }
-        if (item.base) {
-          return _this.httpClient("PATCH", _this.url + "/" + item.doc._id, params, item, function(result) {
-            results.push(result);
-            return cb();
-          }, function(err) {
-            return cb(err);
-          });
-        } else {
-          return _this.httpClient("POST", _this.url, params, item.doc, function(result) {
-            results.push(result);
-            return cb();
-          }, function(err) {
-            return cb(err);
-          });
-        }
-      };
-    })(this), function(err) {
-      if (err) {
-        if (error) {
-          error(err);
-        }
-        return;
-      }
-      if (_.isArray(docs)) {
-        if (success) {
-          return success(results);
-        }
-      } else {
-        if (success) {
-          return success(results[0]);
-        }
-      }
-    });
-  };
-
-  Collection.prototype.remove = function(id, success, error) {
-    var params;
-    if (!this.client) {
-      throw new Error("Client required to remove");
-    }
-    params = {
-      client: this.client
-    };
-    return this.httpClient("DELETE", this.url + "/" + id, params, null, success, function(err) {
-      if (err.status === 410) {
-        return success();
-      } else {
-        return error(err);
-      }
-    });
-  };
-
-  return Collection;
-
-})();
-
-},{"./jQueryHttpClient":13,"./utils":15,"async":18,"jquery":"/nayFu","lodash":"nJZoxB"}],11:[function(require,module,exports){
-var Collection, ReplicatingDb, utils, _;
-
-_ = require('lodash');
-
-utils = require('./utils');
-
-module.exports = ReplicatingDb = (function() {
-  function ReplicatingDb(masterDb, replicaDb) {
-    this.collections = {};
-    this.masterDb = masterDb;
-    this.replicaDb = replicaDb;
-  }
-
-  ReplicatingDb.prototype.addCollection = function(name, success, error) {
-    var collection;
-    collection = new Collection(name, this.masterDb[name], this.replicaDb[name]);
-    this[name] = collection;
-    this.collections[name] = collection;
-    if (success != null) {
-      return success();
-    }
-  };
-
-  ReplicatingDb.prototype.removeCollection = function(name, success, error) {
-    delete this[name];
-    delete this.collections[name];
-    if (success != null) {
-      return success();
-    }
-  };
-
-  return ReplicatingDb;
-
-})();
-
-Collection = (function() {
-  function Collection(name, masterCol, replicaCol) {
-    this.name = name;
-    this.masterCol = masterCol;
-    this.replicaCol = replicaCol;
-  }
-
-  Collection.prototype.find = function(selector, options) {
-    return this.masterCol.find(selector, options);
-  };
-
-  Collection.prototype.findOne = function(selector, options, success, error) {
-    return this.masterCol.findOne(selector, options, success, error);
-  };
-
-  Collection.prototype.upsert = function(docs, bases, success, error) {
-    var items, _ref;
-    _ref = utils.regularizeUpsert(docs, bases, success, error), items = _ref[0], success = _ref[1], error = _ref[2];
-    return this.masterCol.upsert(_.pluck(items, "doc"), _.pluck(items, "base"), (function(_this) {
-      return function() {
-        return _this.replicaCol.upsert(_.pluck(items, "doc"), _.pluck(items, "base"), function(results) {
-          return success(docs);
-        }, error);
-      };
-    })(this), error);
-  };
-
-  Collection.prototype.remove = function(id, success, error) {
-    return this.masterCol.remove(id, (function(_this) {
-      return function() {
-        return _this.replicaCol.remove(id, success, error);
-      };
-    })(this), error);
-  };
-
-  Collection.prototype.cache = function(docs, selector, options, success, error) {
-    return this.masterCol.cache(docs, selector, options, (function(_this) {
-      return function() {
-        return _this.replicaCol.cache(docs, selector, options, success, error);
-      };
-    })(this), error);
-  };
-
-  Collection.prototype.pendingUpserts = function(success, error) {
-    return this.masterCol.pendingUpserts(success, error);
-  };
-
-  Collection.prototype.pendingRemoves = function(success, error) {
-    return this.masterCol.pendingRemoves(success, error);
-  };
-
-  Collection.prototype.resolveUpserts = function(upserts, success, error) {
-    return this.masterCol.resolveUpserts(upserts, (function(_this) {
-      return function() {
-        return _this.replicaCol.resolveUpserts(upserts, success, error);
-      };
-    })(this), error);
-  };
-
-  Collection.prototype.resolveRemove = function(id, success, error) {
-    return this.masterCol.resolveRemove(id, (function(_this) {
-      return function() {
-        return _this.replicaCol.resolveRemove(id, success, error);
-      };
-    })(this), error);
-  };
-
-  Collection.prototype.seed = function(docs, success, error) {
-    return this.masterCol.seed(docs, (function(_this) {
-      return function() {
-        return _this.replicaCol.seed(docs, success, error);
-      };
-    })(this), error);
-  };
-
-  Collection.prototype.cacheOne = function(doc, success, error) {
-    return this.masterCol.cacheOne(doc, (function(_this) {
-      return function() {
-        return _this.replicaCol.cacheOne(doc, success, error);
-      };
-    })(this), error);
-  };
-
-  Collection.prototype.uncache = function(selector, success, error) {
-    return this.masterCol.uncache(selector, (function(_this) {
-      return function() {
-        return _this.replicaCol.uncache(selector, success, error);
-      };
-    })(this), error);
-  };
-
-  return Collection;
-
-})();
-
-},{"./utils":15,"lodash":"nJZoxB"}],12:[function(require,module,exports){
+},{"./selector":11,"./utils":12,"async":15,"lodash":"nJZoxB"}],10:[function(require,module,exports){
 var Collection, WebSQLDb, async, compileSort, doNothing, processFind, utils, _;
 
 _ = require('lodash');
@@ -2642,41 +2315,7 @@ Collection = (function() {
 
 })();
 
-},{"./selector":14,"./utils":15,"async":18,"lodash":"nJZoxB"}],13:[function(require,module,exports){
-module.exports = function(method, url, params, data, success, error) {
-  var fullUrl, req;
-  fullUrl = url + "?" + $.param(params);
-  if (method === "GET") {
-    req = $.ajax(fullUrl, {
-      dataType: "json",
-      timeout: 180000
-    });
-  } else if (method === "DELETE") {
-    req = $.ajax(fullUrl, {
-      type: 'DELETE',
-      timeout: 60000
-    });
-  } else if (method === "POST" || method === "PATCH") {
-    req = $.ajax(fullUrl, {
-      data: JSON.stringify(data),
-      contentType: 'application/json',
-      timeout: 60000,
-      type: method
-    });
-  } else {
-    throw new Error("Unknown method " + method);
-  }
-  req.done(function(response, textStatus, jqXHR) {
-    return success(response || null);
-  });
-  return req.fail(function(jqXHR, textStatus, errorThrown) {
-    if (error) {
-      return error(jqXHR);
-    }
-  });
-};
-
-},{}],14:[function(require,module,exports){
+},{"./selector":11,"./utils":12,"async":15,"lodash":"nJZoxB"}],11:[function(require,module,exports){
 /*
 ========================================
 Meteor is licensed under the MIT License
@@ -3422,7 +3061,7 @@ LocalCollection._compileSort = function (spec) {
 exports.compileDocumentSelector = compileDocumentSelector;
 exports.compileSort = LocalCollection._compileSort;
 
-},{"./EJSON":5,"lodash":"nJZoxB"}],15:[function(require,module,exports){
+},{"./EJSON":5,"lodash":"nJZoxB"}],12:[function(require,module,exports){
 var async, bowser, compileDocumentSelector, compileSort, deg2rad, getDistanceFromLatLngInM, isLocalStorageSupported, pointInPolygon, processGeoIntersectsOperator, processNearOperator, _;
 
 _ = require('lodash');
@@ -3762,12 +3401,12 @@ exports.regularizeUpsert = function(docs, bases, success, error) {
   return [items, success, error];
 };
 
-},{"./HybridDb":6,"./IndexedDb":7,"./LocalStorageDb":8,"./MemoryDb":9,"./WebSQLDb":12,"./selector":14,"async":18,"bowser":19,"lodash":"nJZoxB"}],"lodash":[function(require,module,exports){
+},{"./HybridDb":6,"./IndexedDb":7,"./LocalStorageDb":8,"./MemoryDb":9,"./WebSQLDb":10,"./selector":11,"async":15,"bowser":16,"lodash":"nJZoxB"}],"lodash":[function(require,module,exports){
 module.exports=require('nJZoxB');
 },{}],"nJZoxB":[function(require,module,exports){
 module.exports = window._;
 
-},{}],18:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 (function (process,global){
 /*!
  * async
@@ -5036,7 +4675,7 @@ module.exports = window._;
 }());
 
 }).call(this,require("FWaASH"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"FWaASH":20}],19:[function(require,module,exports){
+},{"FWaASH":17}],16:[function(require,module,exports){
 /*!
   * Bowser - a browser detector
   * https://github.com/ded/bowser
@@ -5314,7 +4953,7 @@ module.exports = window._;
   return bowser
 });
 
-},{}],20:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -5379,7 +5018,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],21:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /*global window:false, self:false, define:false, module:false */
 
 /**
