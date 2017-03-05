@@ -1,5 +1,5 @@
 {
-  "name": "minimongo",
+  "name": "nqm-minimongo",
   "version": "4.5.0",
   "description": "Client-side mongo database with server sync over http",
   "main": "index.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mWater/minimongo.git"
+    "url": "https://github.com/nqminds/minimongo.git"
   },
   "keywords": [
     "mongodb",
@@ -19,12 +19,12 @@
     "WebSQL",
     "storage"
   ],
-  "author": "Clayton Grassick",
+  "author": "Clayton Grassick, toby.ealden@gmail.com",
   "license": "LGPLv3",
   "bugs": {
-    "url": "https://github.com/mWater/minimongo/issues"
+    "url": "https://github.com/nqminds/minimongo/issues"
   },
-  "homepage": "https://github.com/mWater/minimongo",
+  "homepage": "https://github.com/nqminds/minimongo",
   "devDependencies": {
     "browserify": "^3.29.1",
     "chai": "~1.9.0",

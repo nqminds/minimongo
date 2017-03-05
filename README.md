@@ -8,6 +8,11 @@ It is either IndexedDb backed (IndexedDb), WebSQL backed (WebSQLDb), Local stora
 
 Autoselection is possible with `utils.autoselectLocalDb(options, success, error)`. success is called with the selected database.
 
+## Fork
+
+Forked from https://github.com/mWater/minimongo as we need MemoryDb.find().fetch() to be synchronous, as it is in Meteor. This
+allows integration with Tracker (computations are invalidated properly).
+
 ## Usage
 
 Minimongo is designed to be used with browserify.

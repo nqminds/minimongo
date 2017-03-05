@@ -38,16 +38,22 @@ class Collection
     if _.isFunction(options)
       [options, success, error] = [{}, options, success]
 
-    @find(selector, options).fetch (results) ->
+    results = @find(selector, options).fetch (results) ->
       if success? then success(if results.length>0 then results[0] else null)
     , error
+    return if results && results.length>0 then results[0] else null
 
   _findFetch: (selector, options, success, error) ->
-    # Defer to allow other processes to run
-    setTimeout () =>
-      results = processFind(_.values(@items), selector, options)
-      if success? then success(results)
-    , 0
+    # Changed by TOBY - Don't defer => need this to be synchronous for Tracker integration.
+    results = processFind(_.values(@items), selector, options)
+    if success? then success(results)
+    return results;
+    
+    # # Defer to allow other processes to run
+    # setTimeout () =>
+    #   results = processFind(_.values(@items), selector, options)
+    #   if success? then success(results)
+    # , 0
 
   upsert: (docs, bases, success, error) ->
     [items, success, error] = utils.regularizeUpsert(docs, bases, success, error)
