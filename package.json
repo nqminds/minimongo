@@ -1,6 +1,6 @@
 {
   "name": "nqm-minimongo",
-  "version": "4.5.0",
+  "version": "0.1.0",
   "description": "Client-side mongo database with server sync over http",
   "main": "index.js",
   "scripts": {

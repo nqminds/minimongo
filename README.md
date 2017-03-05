@@ -13,6 +13,8 @@ Autoselection is possible with `utils.autoselectLocalDb(options, success, error)
 Forked from https://github.com/mWater/minimongo as we need MemoryDb.find().fetch() to be synchronous, as it is in Meteor. This
 allows integration with Tracker (computations are invalidated properly).
 
+Currently based on 4.5.0 - [commit 24d9d8677e489679c3e87b053f589a16083ea9a9](https://github.com/mWater/minimongo/commit/24d9d8677e489679c3e87b053f589a16083ea9a9)
+
 ## Usage
 
 Minimongo is designed to be used with browserify.
