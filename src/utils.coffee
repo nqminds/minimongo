@@ -140,7 +140,10 @@ exports.processFind = (items, selector, options) ->
     filtered = exports.filterFields(filtered, options.fields)
 
   # Deep clone to prevent modification
-  filtered = JSON.parse(JSON.stringify(filtered))
+  #
+  # TOBY - don't see why we need to incur the cost of this, it also affects props comparison and forces
+  # unnecessary re-subscribes.
+  # filtered = JSON.parse(JSON.stringify(filtered))
 
   return filtered
 
