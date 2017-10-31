@@ -48,7 +48,6 @@
   },
   "dependencies": {
     "async": "^1.4.2",
-    "bowser": "^0.7.1",
     "lodash": "^3.10.1"
   }
 }

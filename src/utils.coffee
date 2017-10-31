@@ -1,7 +1,7 @@
 # Utilities for db handling
 _ = require 'lodash'
 async = require 'async'
-bowser = require 'bowser'
+# bowser = require 'bowser'
 
 compileDocumentSelector = require('./selector').compileDocumentSelector
 compileSort = require('./selector').compileSort
@@ -30,7 +30,7 @@ exports.autoselectLocalDb = (options, success, error) ->
   MemoryDb = require './MemoryDb'
 
   # Get browser capabilities
-  browser = bowser.browser
+  # browser = bowser.browser
 
   return new MemoryDb(options, success)
 
